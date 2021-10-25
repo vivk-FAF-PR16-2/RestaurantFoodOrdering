@@ -38,7 +38,7 @@ func (c *controller) getMenu(ctx *gin.Context) {
 func (c *controller) register(ctx *gin.Context) {
 	var data dto.RestaurantData
 
-	jsonData, err := ioutil.ReadAll(ctx.Request.Body)
+	err := json.NewDecoder(ctx.Request.Body).Decode(&data)
 	if err != nil {
 		message := fmt.Sprintf("Error from `/register` route: %v\n", err)
 
@@ -48,17 +48,8 @@ func (c *controller) register(ctx *gin.Context) {
 		log.Panic(message)
 	}
 
-	err = json.Unmarshal(jsonData, &data)
-	if err != nil {
-		message := fmt.Sprintf("Error from `/register` route: %v\n", err)
-
-		ctx.AbortWithStatusJSON(400, gin.H{
-			"error": message,
-		})
-		log.Panic(message)
-	}
-
-	// TODO: Append new `RestaurantData` to menu list
+	manager := ordermanager.Get()
+	manager.Add(data)
 
 	ctx.JSON(200, gin.H{
 		"msg": "ok",
