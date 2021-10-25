@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/vivk-FAF-PR16-2/RestaurantDinnerHall/internal/domain/dto"
+	"github.com/vivk-FAF-PR16-2/RestaurantDinnerHall/internal/infrastructure/ordermanager"
 	"io/ioutil"
 	"log"
 )
@@ -28,8 +29,9 @@ func (c *controller) RegisterRoutes(r *gin.Engine) {
 }
 
 func (c *controller) getMenu(ctx *gin.Context) {
-	// TODO: Get menu
-	menu := []dto.RestaurantData{dto.RestaurantData{}}
+	manager := ordermanager.Get()
+	menu := manager.Get()
+
 	ctx.JSON(200, &menu)
 }
 
