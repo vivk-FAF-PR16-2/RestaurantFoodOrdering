@@ -48,7 +48,8 @@ func (c *controller) register(ctx *gin.Context) {
 		log.Panic(message)
 	}
 
-	// TODO: Append new `RestaurantData` to menu list
+	manager := ordermanager.Get()
+	manager.Add(data)
 
 	ctx.JSON(200, gin.H{
 		"msg": "ok",
