@@ -28,8 +28,9 @@ func (c *controller) RegisterRoutes(r *gin.Engine) {
 }
 
 func (c *controller) getMenu(ctx *gin.Context) {
-	// TODO: Get menu
-	menu := []dto.RestaurantData{dto.RestaurantData{}}
+	manager := ordermanager.Get()
+	menu := manager.Get()
+
 	ctx.JSON(200, &menu)
 }
 
