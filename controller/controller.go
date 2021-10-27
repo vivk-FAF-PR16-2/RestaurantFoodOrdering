@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/vivk-FAF-PR16-2/RestaurantDinnerHall/internal/domain/dto"
+	"github.com/vivk-FAF-PR16-2/RestaurantDinnerHall/internal/infrastructure/orderconvert"
 	"github.com/vivk-FAF-PR16-2/RestaurantDinnerHall/internal/infrastructure/ordermanager"
 	"io/ioutil"
 	"log"
@@ -59,7 +60,7 @@ func (c *controller) register(ctx *gin.Context) {
 func (c *controller) order(ctx *gin.Context) {
 	var data dto.ClientInData
 
-	jsonData, err := ioutil.ReadAll(ctx.Request.Body)
+	err := json.NewDecoder(ctx.Request.Body).Decode(&data)
 	if err != nil {
 		message := fmt.Sprintf("Error from `/order` route: %v\n", err)
 
@@ -69,7 +70,8 @@ func (c *controller) order(ctx *gin.Context) {
 		log.Panic(message)
 	}
 
-	err = json.Unmarshal(jsonData, &data)
+	responseData := orderconvert.OrderConvert(data)
+	response, err := json.Marshal(responseData)
 	if err != nil {
 		message := fmt.Sprintf("Error from `/order` route: %v\n", err)
 
@@ -79,11 +81,7 @@ func (c *controller) order(ctx *gin.Context) {
 		log.Panic(message)
 	}
 
-	// TODO: Work with `Client Data`
-
-	ctx.JSON(200, gin.H{
-		"msg": "ok",
-	})
+	ctx.JSON(200, &response)
 }
 
 func (c *controller) rating(ctx *gin.Context) {
